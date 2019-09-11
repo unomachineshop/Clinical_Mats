@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Clinical Mats
+Exec=python3 /home/pi/Clinical_Mats/clinical_mats.py
+Icon=/home/pi/Clinical_Mats/images/clinical_mat_icon.png
+Path=/home/pi/Clinical_Mats/
+Terminal=false
+Type=Application
+StartupNotify=false
+Hidden=false

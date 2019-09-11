@@ -12,6 +12,19 @@ clock = pygame.time.Clock()
 FPS = 20
 start_ticks = 0
 
+# Setup GPIO
+gpio.setmode(gpio.BCM)
+TOP_LEFT = 10
+TOP_RIGHT = 22
+BOT_LEFT = 27
+BOT_RIGHT = 17
+
+# Defining pins
+gpio.setup(TOP_LEFT, gpio.IN)
+gpio.setup(TOP_RIGHT, gpio.IN)
+gpio.setup(BOT_LEFT, gpio.IN)
+gpio.setup(BOT_RIGHT, gpio.IN)
+
 # Screen dimensions
 DISPLAY_WIDTH, DISPLAY_HEIGHT = pyautogui.size()
 cw = DISPLAY_WIDTH / 2  # Center width of screen 
@@ -43,6 +56,12 @@ large_font = pygame.font.SysFont("quicksand", 28)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREY = (185, 185, 185)
+
+# Global exit button
+exit_rect = pygame.draw.rect(screen, WHITE, (DISPLAY_WIDTH - 200, DISPLAY_HEIGHT - 100,200,100))
+exit_text = medium_font.render("Exit", True, BLACK)
+exit_text_rect = exit_text.get_rect()
+exit_text_rect.center = exit_rect.center
 
 
 
@@ -77,6 +96,10 @@ def intro():
     r_text_rect = r_text.get_rect()
     r_text_rect.center = r_rect.center
     screen.blit(r_text, r_text_rect)
+
+    # Exit Button
+    exit_rect = pygame.draw.rect(screen, WHITE, (DISPLAY_WIDTH - 200, DISPLAY_HEIGHT - 100,200,100))
+    screen.blit(exit_text, exit_text_rect)
 
     ### Event System ###
     for event in pygame.event.get():
@@ -130,6 +153,10 @@ def intro():
                 gm.trial_type = 3
                 gm.target_mat = random.randint(0,3)
 
+            # 'Exit' button
+            if exit_rect.collidepoint(mouse_pos):
+                gm.running = False
+
 def countdown(): 
     
     ### Logic ###
@@ -144,6 +171,10 @@ def countdown():
     timer_text = large_font.render("{:0.0f}".format(abs(seconds)), False, WHITE)
     screen.blit(timer_text, (cw, ch))
 
+    # Exit Button
+    exit_rect = pygame.draw.rect(screen, WHITE, (DISPLAY_WIDTH - 200, DISPLAY_HEIGHT - 100,200,100))
+    screen.blit(exit_text, exit_text_rect)
+
     ### Event System ###
     for event in pygame.event.get():
         # Exit window
@@ -155,7 +186,45 @@ def countdown():
             if event.key == pygame.K_ESCAPE:
                 gm.running = False
 
+        # Button collision checks
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            mouse_pos = event.pos
+           
+            # Exit button
+            if exit_rect.collidepoint(mouse_pos):
+                gm.running = False
+
+
 def trial():
+   
+    
+    ### User input ###
+    # GPIO pressed checks
+    if gpio.input(TOP_LEFT):
+        mats[0].state = 1
+
+    if gpio.input(TOP_RIGHT):
+        mats[1].state = 1
+
+    if gpio.input(BOT_LEFT):
+        mats[2].state = 1
+
+    if gpio.input(BOT_RIGHT):
+        mats[3].state = 1
+
+    # GPIO unpressed checks
+    if gpio.input(TOP_LEFT) == 0 and mats[0].state == 1:
+        mats[0].state = 0
+
+    if gpio.input(TOP_RIGHT) == 0 and mats[1].state == 1:
+        mats[1].state = 0
+
+    if gpio.input(BOT_LEFT) == 0 and mats[2].state == 1:
+        mats[2].state = 0
+
+    if gpio.input(BOT_RIGHT) == 0 and mats[3].state == 1:
+        mats[3].state = 0
+    
     
     ### Logic ##
     # Front to back
@@ -292,9 +361,14 @@ def trial():
 
 
     ### Drawing ###
+    # Exit Button
+    exit_rect = pygame.draw.rect(screen, WHITE, (DISPLAY_WIDTH - 200, DISPLAY_HEIGHT - 100,200,100))
+    screen.blit(exit_text, exit_text_rect)
+    
+    # Iterate through mats and draw them    
     for mat in mats:
         mat.draw()
-
+ 
     ### Event System ###
     for event in pygame.event.get():
         
@@ -306,7 +380,7 @@ def trial():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 gm.running = False
-
+            """
             # Keyboard input, testing purposes only
             if event.key == pygame.K_q:
                 mats[0].state = 1
@@ -326,18 +400,44 @@ def trial():
                 mats[2].state = 0
             if event.key == pygame.K_s:
                 mats[3].state = 0
+            """
+
+        # Button collision checks
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            mouse_pos = event.pos
+           
+            # Exit button
+            if exit_rect.collidepoint(mouse_pos):
+                gm.running = False
 
 def results():
 
     ### Logic ###
 
     ### Drawing ###
-    timer_text = large_font.render("Trial Complete!", False, WHITE)
-    screen.blit(timer_text, (cw-100, ch-100))
-    step_text = large_font.render("Steps: {}".format(gm.steps + 1), False, WHITE)
-    screen.blit(step_text, (cw-60, ch-50))
+    # Trial complete text
+    finish_text = large_font.render("Trial Complete!", False, WHITE)
+    screen.blit(finish_text, (cw-100, ch-100))
+    
+    # Step count text
+    step_text = large_font.render("Steps: {}".format(gm.steps), False, WHITE)
+    screen.blit(step_text, (cw-70, ch-50))
+    
+    # Timer text
     timer_text = large_font.render("Time: {}".format(gm.trial_timer), False, WHITE)
     screen.blit(timer_text, (cw-80, ch))
+
+    # New Trial Button
+    nt_rect = pygame.draw.rect(screen, WHITE, (cw-100, ch+150,200,100))
+    nt_text = medium_font.render("New Trial?", True, BLACK)
+    nt_text_rect = nt_text.get_rect()
+    nt_text_rect.center = nt_rect.center
+    screen.blit(nt_text, nt_text_rect)
+
+    # Exit Button
+    exit_rect = pygame.draw.rect(screen, WHITE, (DISPLAY_WIDTH - 200, DISPLAY_HEIGHT - 100,200,100))
+    screen.blit(exit_text, exit_text_rect)
+
 
     ### Event System ###
     for event in pygame.event.get():
@@ -349,6 +449,22 @@ def results():
         # ESC exit
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
+                gm.running = False
+        
+        # Button collision checks
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            mouse_pos = event.pos
+
+            # New trial button
+            if nt_rect.collidepoint(mouse_pos):
+                # Reset all game manager variables
+                gm.reset()
+                # Reset all mats to default grey state
+                for mat in mats: 
+                    mat.state = 0
+
+            # Exit button
+            if exit_rect.collidepoint(mouse_pos):
                 gm.running = False
 
 

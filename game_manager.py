@@ -31,3 +31,15 @@ class Game_Manager:
         # Trial timer
         self.trial_timer_start_ticks = 0
         self.trial_timer = 0
+
+    def reset(self):
+        self.game_state = 1
+        self.timer = 5
+        self.start_ticks = 0
+        self.trial_type = 1
+        self.target_mat = 0
+        self.switch = True
+        self.count = 1
+        self.steps = 0
+        self.trial_timer_start_ticks = 0
+        self.trial_timer = 0
