@@ -16,17 +16,17 @@ start_ticks = 0
 DISPLAY_WIDTH, DISPLAY_HEIGHT = pyautogui.size()
 cw = DISPLAY_WIDTH / 2  # Center width of screen 
 ch = DISPLAY_HEIGHT / 2 # Center height of screen
-#screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
-screen = pygame.display.set_mode((1600,1200))
+screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+#screen = pygame.display.set_mode((1600,1200))
 
 # Game manager
 gm = Game_Manager(running=True, game_state=1)
 
 # List of Mats
 mats = [
-        Mat("Top Left", screen, cw - 200, ch - 200),
-        Mat("Top Right", screen, cw, ch - 200),
-        Mat("Bottom Left", screen, cw - 200, ch),
+        Mat("Top Left", screen, cw - 420, ch - 420),
+        Mat("Top Right", screen, cw, ch - 420),
+        Mat("Bottom Left", screen, cw - 420, ch),
         Mat("Bottom Right", screen, cw, ch)
         ]
 
@@ -137,12 +137,12 @@ def countdown():
     seconds = gm.timer - seconds
     
     if seconds <= 1:
-        gm.timer = 5
         gm.game_state = 3
+        gm.trial_timer_start_ticks = pygame.time.get_ticks()
 
     ### Drawing ###
     timer_text = large_font.render("{:0.0f}".format(abs(seconds)), False, WHITE)
-    screen.blit(timer_text, (cw-100, ch-100))
+    screen.blit(timer_text, (cw, ch))
 
     ### Event System ###
     for event in pygame.event.get():
@@ -167,6 +167,7 @@ def trial():
             # Target mat was pressed
             if mats[gm.target_mat].state == 1:
                 pressed = []
+                gm.steps += 1
 
                 # Iterate through front mats
                 for x in range(0,2):
@@ -188,8 +189,8 @@ def trial():
 
             # Target mat was pressed
             if mats[gm.target_mat].state == 1:
-                #mats[gm.target_mat].state = 1
                 pressed = []
+                gm.steps += 1
 
                 # Iterate through back mats
                 for x in range(2,4):
@@ -219,6 +220,7 @@ def trial():
             # Target mat was pressed
             if mats[gm.target_mat].state == 1:
                 pressed = []
+                gm.steps += 1
 
                 # Iterate through left  mats
                 for x in [y for y in range(0,4) if y != 0  and y != 2]:
@@ -240,8 +242,8 @@ def trial():
 
             # Target Mat was pressed
             if mats[gm.target_mat].state == 1:
-                #mats[gm.target_mat].state = 1
                 pressed = []
+                gm.steps += 1
 
                 # Iterate through back mats
                 for x in [y for y in range(0,4) if y != 1 and y != 3]:
@@ -267,6 +269,9 @@ def trial():
        
         # Target mat was pressed
         if mats[gm.target_mat].state == 1:
+            gm.steps += 1
+            
+            
             # Choose a new mat
             mats[gm.target_mat].state = 1
 
@@ -327,6 +332,12 @@ def results():
     ### Logic ###
 
     ### Drawing ###
+    timer_text = large_font.render("Trial Complete!", False, WHITE)
+    screen.blit(timer_text, (cw-100, ch-100))
+    step_text = large_font.render("Steps: {}".format(gm.steps + 1), False, WHITE)
+    screen.blit(step_text, (cw-60, ch-50))
+    timer_text = large_font.render("Time: {}".format(gm.trial_timer), False, WHITE)
+    screen.blit(timer_text, (cw-80, ch))
 
     ### Event System ###
     for event in pygame.event.get():
@@ -355,9 +366,15 @@ while gm.running:
 
     # Trial State
     if gm.game_state == 3:
-        trial()
+        
+        # Run until 20 steps are counted
+        if gm.steps < 20:
+            trial()
+        else:
+            gm.trial_timer = (pygame.time.get_ticks() - gm.trial_timer_start_ticks) / 1000
+            gm.game_state = 4
 
-    # Results State ###
+    # Results State
     if gm.game_state == 4:
         results()
     

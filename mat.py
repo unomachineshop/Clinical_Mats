@@ -18,8 +18,8 @@ class Mat:
         self.location = (self.locx, self.locy)
 
         # Images
-        self.grey = image.load("/home/pi/PressureMat/images/grey.png")
-        self.green = image.load("/home/pi/PressureMat/images/green.png")
+        self.grey = image.load("/home/pi/Clinical_Mats/images/grey.png")
+        self.green = image.load("/home/pi/Clinical_Mats/images/green.png")
         self.image = self.grey
 
 
