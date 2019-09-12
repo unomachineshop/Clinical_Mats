@@ -19,11 +19,8 @@ class Game_Manager:
 
         # Used to switch sides, dependent on algorithm
         # (ex: Switching from Top to Bottom logic)
+        # (ex: Switching from Left to Right logic)
         self.switch = True
-
-        # Ensures that both mats were pressed before continuing
-        # to next set. (ex: top left and then top right)
-        self.count = 1
 
         # Trial step counter
         self.steps = 0

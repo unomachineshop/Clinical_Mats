@@ -10,7 +10,6 @@ from mat import Mat
 # Game clock
 clock = pygame.time.Clock()
 FPS = 20
-start_ticks = 0
 
 # Setup GPIO
 gpio.setmode(gpio.BCM)
@@ -226,7 +225,7 @@ def trial():
         mats[3].state = 0
     
     
-    ### Logic ##
+    ### Logic ###
     # Front to back
     if gm.trial_type == 1:
         
@@ -245,13 +244,11 @@ def trial():
 
                 # Grab a unique non used, random mat
                 if len(pressed) < 2:
-                    gm.target_mat = choice([i for i in range(0,2) if i not in pressed])
+                    gm.target_mat = choice([i for i in range(2,4) if i not in pressed])
 
-                # Ensure both front mats were pressed
-                gm.count += 1
-                if gm.count == 2:
-                    gm.count = 0
-                    gm.switch = False
+                # Switch to back
+                gm.switch = False
+                
         
         # Back
         else:
@@ -268,13 +265,10 @@ def trial():
 
                 # Grab a uniqe non used, random mat
                 if len(pressed) < 2:
-                    gm.target_mat = choice([i for i in range(2,4) if i not in pressed])
+                    gm.target_mat = choice([i for i in range(0,2) if i not in pressed])
 
-                # Ensure both back mats were pressed
-                gm.count += 1
-                if gm.count == 2:
-                    gm.count = 0
-                    gm.switch = True
+                # Switch to top
+                gm.switch = True 
         
         # Set new target mat
         mats[gm.target_mat].state = 2
@@ -298,13 +292,10 @@ def trial():
 
                 # Grab a unique non used, random mat
                 if len(pressed) < 2:
-                    gm.target_mat = choice([i for i in range(0,4) if i not in pressed and i != 0 and i != 2])
+                    gm.target_mat = choice([i for i in range(0,4) if i not in pressed and i != 1 and i != 3])
                 
-                # Ensure both front mats were pressed
-                gm.count += 1
-                if gm.count == 2:
-                    gm.count = 0
-                    gm.switch = False
+                # Switch to right
+                gm.switch = False
 
         # Right
         else:
@@ -321,14 +312,11 @@ def trial():
 
                 # Grab a unique non used, random mat
                 if len(pressed) < 2:
-                    gm.target_mat = choice([i for i in range(0,4) if i not in pressed and i != 1 and i != 3])
+                    gm.target_mat = choice([i for i in range(0,4) if i not in pressed and i != 0 and i != 2])
                 
-                # Ensure both back mats were pressed
-                gm.count += 1
-                if gm.count == 2:
-                    gm.count = 0
-                    gm.switch = True
-
+                # Switch to left
+                gm.switch = True
+        
         # Set new target mat
         mats[gm.target_mat].state = 2
 
@@ -380,27 +368,6 @@ def trial():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 gm.running = False
-            """
-            # Keyboard input, testing purposes only
-            if event.key == pygame.K_q:
-                mats[0].state = 1
-            if event.key == pygame.K_w:
-                mats[1].state = 1
-            if event.key == pygame.K_a:
-                mats[2].state = 1
-            if event.key == pygame.K_s:
-                mats[3].state = 1
-    
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_q:
-                mats[0].state = 0
-            if event.key == pygame.K_w:
-                mats[1].state = 0
-            if event.key == pygame.K_a:
-                mats[2].state = 0
-            if event.key == pygame.K_s:
-                mats[3].state = 0
-            """
 
         # Button collision checks
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
