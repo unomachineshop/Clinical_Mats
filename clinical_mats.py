@@ -159,15 +159,21 @@ def intro():
 def countdown(): 
     
     ### Logic ###
+    # Timer
     seconds = (pygame.time.get_ticks() - gm.start_ticks) / 1000
     seconds = gm.timer - seconds
     
-    if seconds <= 1:
+    if seconds <= .01:
         gm.game_state = 3
         gm.trial_timer_start_ticks = pygame.time.get_ticks()
 
     ### Drawing ###
-    timer_text = large_font.render("{:0.0f}".format(abs(seconds)), False, WHITE)
+    # Display message
+    disp_text = large_font.render("Keep foot off mat until countdown completes!", False, WHITE)
+    screen.blit(disp_text, (cw-280, ch-100))
+
+    # Timer text
+    timer_text = large_font.render("{:0.1f}".format(abs(seconds)), False, WHITE)
     screen.blit(timer_text, (cw, ch))
 
     # Exit Button

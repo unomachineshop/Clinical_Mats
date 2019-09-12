@@ -8,7 +8,7 @@ class Game_Manager:
         self.game_state = game_state
         
         # Countdown timer
-        self.timer = 5
+        self.timer = 10
         self.start_ticks = 0
 
         # Trial selection
@@ -31,7 +31,7 @@ class Game_Manager:
 
     def reset(self):
         self.game_state = 1
-        self.timer = 5
+        self.timer = 10
         self.start_ticks = 0
         self.trial_type = 1
         self.target_mat = 0
