@@ -36,7 +36,6 @@ class Game_Manager:
         self.trial_type = 1
         self.target_mat = 0
         self.switch = True
-        self.count = 1
         self.steps = 0
         self.trial_timer_start_ticks = 0
         self.trial_timer = 0

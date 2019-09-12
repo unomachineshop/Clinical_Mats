@@ -9,7 +9,7 @@ from mat import Mat
 
 # Game clock
 clock = pygame.time.Clock()
-FPS = 20
+FPS = 40
 
 # Setup GPIO
 gpio.setmode(gpio.BCM)
@@ -139,7 +139,7 @@ def intro():
                 
 
                 # Left
-                if gm.target_mat == 1 or gm.target_mat == 3:
+                if gm.target_mat == 0 or gm.target_mat == 2:
                     gm.switch = True
                 # Right
                 else:
@@ -201,8 +201,7 @@ def countdown():
 
 
 def trial():
-   
-    
+
     ### User input ###
     # GPIO pressed checks
     if gpio.input(TOP_LEFT):
@@ -218,16 +217,16 @@ def trial():
         mats[3].state = 1
 
     # GPIO unpressed checks
-    if gpio.input(TOP_LEFT) == 0 and mats[0].state == 1:
+    if gpio.input(TOP_LEFT) == 0:
         mats[0].state = 0
 
-    if gpio.input(TOP_RIGHT) == 0 and mats[1].state == 1:
+    if gpio.input(TOP_RIGHT) == 0:
         mats[1].state = 0
 
-    if gpio.input(BOT_LEFT) == 0 and mats[2].state == 1:
+    if gpio.input(BOT_LEFT) == 0:
         mats[2].state = 0
 
-    if gpio.input(BOT_RIGHT) == 0 and mats[3].state == 1:
+    if gpio.input(BOT_RIGHT) == 0:
         mats[3].state = 0
     
     
@@ -298,7 +297,7 @@ def trial():
 
                 # Grab a unique non used, random mat
                 if len(pressed) < 2:
-                    gm.target_mat = choice([i for i in range(0,4) if i not in pressed and i != 1 and i != 3])
+                    gm.target_mat = choice([i for i in range(0,4) if i not in pressed and i != 0 and i != 2]) #1,3
                 
                 # Switch to right
                 gm.switch = False
@@ -318,7 +317,7 @@ def trial():
 
                 # Grab a unique non used, random mat
                 if len(pressed) < 2:
-                    gm.target_mat = choice([i for i in range(0,4) if i not in pressed and i != 0 and i != 2])
+                    gm.target_mat = choice([i for i in range(0,4) if i not in pressed and i != 1 and i != 3]) # 0,2
                 
                 # Switch to left
                 gm.switch = True
@@ -333,8 +332,7 @@ def trial():
         # Target mat was pressed
         if mats[gm.target_mat].state == 1:
             gm.steps += 1
-            
-            
+             
             # Choose a new mat
             mats[gm.target_mat].state = 1
 
@@ -374,6 +372,28 @@ def trial():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 gm.running = False
+            
+            """
+            # Keyboard input, testing purposes only
+            if event.key == pygame.K_q:
+                mats[0].state = 1
+            if event.key == pygame.K_w:
+                mats[1].state = 1
+            if event.key == pygame.K_a:
+                mats[2].state = 1
+            if event.key == pygame.K_s:
+                mats[3].state = 1
+    
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_q:
+                mats[0].state = 0
+            if event.key == pygame.K_w:
+                mats[1].state = 0
+            if event.key == pygame.K_a:
+                mats[2].state = 0
+            if event.key == pygame.K_s:
+                mats[3].state = 0
+            """
 
         # Button collision checks
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
